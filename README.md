@@ -68,7 +68,6 @@ POSTGRES_PASSWORD=postgres
 DB_HOST=db
 DB_PORT=5432
 ```
-* в терминале ввести xcode-select --install, если не устанавливается библиотека web3
 * перейти в директорию с файлом docker-compose.yaml
 * ввести в терминале: 
 ```
