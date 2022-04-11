@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 
-class AccountTests(APITestCase):
+class Tests(APITestCase):
     def test_create_object(self):
         """
         Проверка создания объекта
@@ -34,5 +34,15 @@ class AccountTests(APITestCase):
         request = self.client.post('/statistics/', data, format='json')
         self.assertEqual(request.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Statistics.objects.count(), 1)
-        response = self.client.delete('/statistics/delete/')
+        self.client.delete('/statistics/delete/')
         self.assertEqual(Statistics.objects.count(), 0)
+
+    def test_incorrect_date(self):
+        """
+        Проверка получения ошибки при вводе неверной даты в GET запросе
+        """
+        response = self.client.get('/statistics/?from=2020&to=2020-11-13')
+        self.assertEqual(response.data['detail'],
+                         'Неверный формат даты начала периода, '
+                         'формат должен быть YYYY-MM-DD'
+                         )

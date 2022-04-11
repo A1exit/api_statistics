@@ -32,6 +32,21 @@ services:
     depends_on:
       - web
 
+  init:
+    build: .
+    command:
+      - /bin/bash
+      - -c
+      - sleep 30 &&
+        echo "Begin Migration ..." &&
+        python3 manage.py makemigrations &&
+        python3 manage.py migrate --noinput &&
+        echo "Migration Completed" &&
+        sleep 5
+    restart: "no"
+    depends_on:
+      - nginx
+
 volumes:
   postgres_data:
   static_value:

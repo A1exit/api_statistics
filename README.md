@@ -62,14 +62,11 @@ POSTGRES_PASSWORD=postgres
 DB_HOST=db
 DB_PORT=5432
 ```
-* в терминале ввести xcode-select --install, если не устанавливается библиотека web3
 * перейти в директорию с файлом docker-compose.yaml
 * ввести в терминале: 
 ```
 docker-compose up -d --build
-docker-compose exec web python manage.py migrate
 docker-compose exec web python manage.py createsuperuser
-docker-compose exec web python manage.py collectstatic --no-input 
 ```
 
 #### Aвтор:
