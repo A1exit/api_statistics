@@ -5,6 +5,11 @@ from rest_framework import serializers
 from .models import Statistics
 
 
+class ViewStatisticsSerializer(serializers.Serializer):
+    start = serializers.DateField()
+    stop = serializers.DateField()
+
+
 class StatisticsSerializer(serializers.ModelSerializer):
     cpc = serializers.SerializerMethodField()
     cpm = serializers.SerializerMethodField()
@@ -24,37 +29,34 @@ class StatisticsSerializer(serializers.ModelSerializer):
         try:
             return data.cost / data.clicks
         except ZeroDivisionError:
-            return 'На 0 делить нельзя'
+            return 'It cannot be divided by 0'
 
     def get_cpm(self, data):
         try:
             return data.cost / data.views * 1000
         except ZeroDivisionError:
-            return 'На 0 делить нельзя'
+            return 'It cannot be divided by 0'
 
     def validate_date(self, value):
         now = datetime.now().date()
         if value > now:
-            raise serializers.ValidationError('Такая дата еще не наступила')
+            raise serializers.ValidationError('such a date has not yet come')
         return value
 
     def validate_clicks(self, value):
         if value <= -1:
             raise serializers.ValidationError(
-                'Проверьте введенное значение количества кликов, '
-                'оно не может быть отрицательным')
+                'clicks cannot be negative')
         return value
 
     def validate_cost(self, value):
         if value <= -1:
             raise serializers.ValidationError(
-                'Проверьте введенное значение стоимости кликов, '
-                'оно не может быть отрицательным')
+                'cost cannot be negative')
         return value
 
     def validate_views(self, value):
         if value <= -1:
             raise serializers.ValidationError(
-                'Проверьте введенное значение количества показов, '
-                'оно не может быть отрицательным')
+                'views cannot be negative')
         return value

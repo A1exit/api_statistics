@@ -6,7 +6,7 @@ class StaticPagesURLTests(TestCase):
         self.guest_client = Client()
 
     def test_url(self):
-        """Проверка доступности адреса /statistics/"""
+        """ Checking address availability /statistics/"""
         response = self.guest_client.get('/statistics/?from=2020-11-11&'
                                          'to=2020-11-23')
         self.assertEqual(response.status_code, 200)

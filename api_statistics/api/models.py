@@ -5,11 +5,11 @@ class Statistics(models.Model):
     date = models.DateField(
         verbose_name='дата события',
     )
-    views = models.IntegerField(
+    views = models.PositiveIntegerField(
         verbose_name='количество показов',
         blank=True
     )
-    clicks = models.IntegerField(
+    clicks = models.PositiveIntegerField(
         verbose_name='количество кликов',
         blank=True
     )

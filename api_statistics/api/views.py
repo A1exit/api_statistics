@@ -6,11 +6,11 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from .models import Statistics
-from .serializers import StatisticsSerializer
+from .serializers import StatisticsSerializer, ViewStatisticsSerializer
 
 
 class StatisticsViewSet(viewsets.ModelViewSet):
-    """Позволяет создать запись, получить список записей"""
+    """Allows you to create a record, get a list of records"""
     serializer_class = StatisticsSerializer
     http_method_names = ['get', 'post']
     filter_backends = (DjangoFilterBackend, filters.SearchFilter,
@@ -18,32 +18,21 @@ class StatisticsViewSet(viewsets.ModelViewSet):
     ordering_fields = ('date', 'views', 'clicks', 'cost')
 
     def get_queryset(self):
-        start = self.request.query_params.get('from', None)
-        stop = self.request.query_params.get('to', None)
-        if start:
-            if stop:
-                try:
-                    datetime.datetime.strptime(stop, '%Y-%m-%d')
-                    try:
-                        datetime.datetime.strptime(start, '%Y-%m-%d')
-                        return Statistics.objects.filter(
-                            date__range=[start, stop])
-                    except ValueError:
-                        raise exceptions.ParseError(
-                            'Неверный формат даты начала периода, '
-                            'формат должен быть YYYY-MM-DD'
-                        )
-                except ValueError:
-                    raise exceptions.ParseError(
-                        'Неверный формат даты окончания периода, '
-                        'формат должен быть YYYY-MM-DD'
-                    )
-            raise exceptions.ParseError('Введите дату окончания периода')
-        raise exceptions.ParseError('Введите дату начала периода')
+        start = self.request.query_params.get('from')
+        stop = self.request.query_params.get('to')
+        data = {'start': start,
+                'stop': stop}
+        serializer = ViewStatisticsSerializer(data=data)
+        if serializer.is_valid():
+            return Statistics.objects.filter(
+                date__range=[start, stop])
+        raise exceptions.ValidationError(
+            'The time values are entered incorrectly'
+        )
 
 
 @api_view(['DELETE'])
 def delete(request):
-    """Удаляет все записи модели Statistics"""
+    """Deletes all records of the Statistics model"""
     Statistics.objects.all().delete()
     return Response(status=status.HTTP_204_NO_CONTENT)
